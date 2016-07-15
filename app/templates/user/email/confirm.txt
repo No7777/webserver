@@ -1,0 +1,12 @@
+你好 {{ user.username }},
+
+欢迎来到 No.7!
+
+请点击以下链接来确认你的账户：
+
+{{ url_for('user.confirm', token=token, _external=True) }}
+
+
+No.7
+
+回复此邮件无效

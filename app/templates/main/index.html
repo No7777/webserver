@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<br />
+<br />
+<div class="row">
+  <div class="col-md-5">
+      <table class="table">
+          <tr class="danger"><th><h4 align="center">微博推荐</h4></th></tr>
+          {% for li in wbtopic_list%}
+          <tr><td><a href="{{ url_for('weibo.topicdisplay', topic_name=li) }}">{{ li }}</a></td></tr>
+          {% endfor %}
+          {% for li in wbhot_list%}
+          <tr><td><a href=" {{ url_for('weibo.trend', topic=li) }}">{{ li }}</a></td></tr>
+          {% endfor %}
+      </table>
+  </div>
+  <div class="col-md-5 col-md-offset-1">
+      <table class="table">
+          <tr class="danger"><th><h4 align="center">新闻推荐</h4></th></tr>
+          {% for li in news_list %}
+          <tr><td><a href="{{ url_for('news.wordcloud', news_title=li) }}">{{ li }}</a></td></tr>
+          {% endfor %}
+      </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title%}
+    新闻列表
+{% endblock %}
+{% block page_content %}
+<form method="POST" action="">
+<div class="input-group">
+    <input type="text" class="form-control" placeholder="YYYY-MM-DD" name="time">
+    <span class="input-group-btn">
+    <button class="btn btn-default" type="submit">搜索</button>
+    </span>
+</div>
+</form>
+<h3>{{ news_time }}</h3>
+  <table class="table table-hover">
+    <tr><th>标题</th><th>热度</th></tr>
+    {% for key, value in dic.items() %}
+    <tr><td><a href="{{ url_for('news.wordcloud', news_title=key) }}">{{ key }}</a></td><td>{{ value }}</td></tr>
+    {% endfor %}
+  </table>
+<h6 align="right"><br><br>数据来源于网易新闻</h6>
+{%endblock page_content %}

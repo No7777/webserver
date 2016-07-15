@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script src="../static/echarts.min.js"></script>
+{% endblock %}
+
+{% block page_content %}
+<br />
+<br />
+<form method="POST" action="">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="YYYY-MM-DD" name="time">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">搜索</button>
+        </span>
+    </div>
+</form>
+<br />
+<div class="panel panel-info">
+    <div class="panel-heading" align="center"> {{ weibo_time }}</div>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div class="panel-body">
+<div id="main" style="width: 1100px;height:900px;"></div>
+<script type="text/javascript">
+  // 基于准备好的dom，初始化echarts实例
+  var myChart = echarts.init(document.getElementById('main'));
+
+  // 指定图表的配置项和数据
+  var option = {
+    title : {
+      text: '话题比例',
+      subtext: '数据来源于新浪微博',
+      x:'center'
+    },
+    tooltip : {
+      trigger: 'item',
+      formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+      orient : 'vertical',
+      x : 'left',
+      //data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+    },
+    toolbox: {
+      show : true,
+      feature : {
+        mark : {show: true},
+        dataView : {show: true, readOnly: false},
+        magicType : {
+          show: true,
+          type: ['pie', 'funnel'],
+          option: {
+            funnel: {
+              x: '25%',
+              width: '50%',
+              funnelAlign: 'left',
+              max: 1548
+            }
+          }
+        },
+        restore : {show: true},
+        saveAsImage : {show: true}
+      }
+    },
+    calculable : true,
+    series : [
+    {
+      name:'访问来源',
+      type:'pie',
+      radius : '55%',
+      center: ['50%', '40%'],
+      data:[
+      {% for k, v in dic.items() recursive %}
+      {value:{{ v }}, name:'{{ k }}'},
+      {% endfor %}
+      ]
+    }
+    ]
+
+  };
+  // 使用刚指定的配置项和数据显示图表。
+  myChart.setOption(option);
+  //echarts图表点击跳转
+  myChart.on('click', function (param){
+      var name=param.name;
+      if(name != ""){
+          window.location.href="/weibolist/{{ weibo_time }}/" + name;
+      }
+  });
+  myChart.on('click',eConsole);
+</script>
+</div>
+</div>
+{% endblock %}

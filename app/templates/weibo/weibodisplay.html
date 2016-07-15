@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block page_content %}
+{% for l in li%}
+<table class="table">
+    <tr><th class="warning">时间:{{ l[0] }}     作者:{{ l[2] }}</th></tr>
+    <tr><td>
+    <h4>{{ l[1]|striptags }}</h4>
+    <h4>{{ l[3] }} {{ l[4] }} {{ l[5] }}</h4>
+    </td></tr>
+</table>
+{% endfor %}
+{% endblock %}

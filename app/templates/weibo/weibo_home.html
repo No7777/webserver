@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block page_content %}
+<br />
+  <div class="row">
+    <div class="col-md-3 col-md-offset-2">
+      <a href="{{ url_for('weibo.topic') }}">
+          <div class="well"><h3 align="center">话题</h3></div>
+      </a>
+    </div>
+    <div class="col-md-3 col-md-offset-2">
+      <a href="{{ url_for('weibo.top50') }}">
+          <div class="well"><h3 align="center">热搜</h3></div>
+      </a>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script src="static/echarts.min.js"></script>
+{% endblock %}
+
+{% block page_content%}
+<br />
+<br />
+<form method="POST" action="">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="YYYY-MM-DD" name="time">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">搜索</button>
+        </span>
+    </div>
+</form>
+<br />
+<div class="panel panel-info">
+    <div class="panel-heading"><center> {{ time }}</center></div>
+    <div class="panel-body">
+        <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+        <div id="main" style="width: 1100px; height: 3100px;"></div>
+        <script type="text/javascript">
+            var top_name = [];
+            var top_index = [];
+            var dic = {{ dic|safe }};
+            for (m in dic){
+                //alert(m);
+                top_name.push(m);
+                top_index.push(dic[m]);
+            }
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title : {
+                    text: 'top50',
+                    subtext: '数据来源于新浪微博',
+                },
+                tooltip : {
+                    trigger: 'axis',
+                    axispointer: {
+                        type: 'shadow'
+                    }
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readonly: false},
+                        magicType: {show: true, type: ['line', 'bar']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                calculable : true,
+                xAxis : [
+                {
+                    position: 'top',
+                    type : 'value',
+                    splitLine: {
+                        show: false
+                    },
+                }
+                ],
+                grid: { // 控制图的大小，调整下面这些值就可以，
+                    x: 200,
+                    x2: 100,
+                    y2: 100,// y2可以控制 X轴跟Zoom控件之间的间隔，避免以为倾斜后造成 label重叠到zoom上
+                },
+                yAxis : [
+                {
+                    axisLabel :{
+                        interval:0 
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    type : 'category',
+                    data : top_name,
+                }
+                ],
+                series : [
+                {
+                    name:'热搜指数',
+                    type:'bar',
+                    data:top_index
+                },
+                ]
+            };
+            //}
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+
+            //echarts图表点击跳转
+            myChart.on('click', function (param){
+                var name=param.name;
+                if(name != ""){
+                    window.location.href="/trend/"+name;
+                }
+            });
+            myChart.on('click',eConsole);
+        </script>
+    </div>
+</div>
+{% endblock %}

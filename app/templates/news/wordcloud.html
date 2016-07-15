@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="../static/favicon.ico" type="image/x-icon">
+<link rel="icon" href="../static/favicon.ico" type="image/x-icon">
+<script src="../static/echarts.min.js"></script>
+{% endblock %}
+{% block title%}
+分析结果展示 - {{ news_title }}
+{% endblock %}
+{% block page_content %}
+<br />
+<br />
+<div class="panel panel-info">
+    <div class="panel-heading">文字云图</div>
+  <div class="panel-body">
+    <div id="main1" style="height:400px"></div>
+    <script src="../static/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script charset="utf-8" type="text/javascript">
+        d = [];
+        var a = {{ dic|safe }};
+        for (m in a) {
+          d.push({
+            name: m,
+            value: a[m] * 1000,
+            itemStyle: createRandomItemStyle()
+          })
+        require.config({
+          paths: {
+            echarts: '../static/echarts-2.2.7/build/dist'
+          }
+        });
+        function createRandomItemStyle(){
+          return {
+            normal: {
+              color: 'rgb(' + [
+                         Math.round(Math.random() * 160),
+                         Math.round(Math.random() * 160),
+                         Math.round(Math.random() * 160)
+              ].join(',') + ')'
+              }
+              };
+              }
+              require(
+                [
+                'echarts',
+                'echarts/chart/wordCloud'
+                ],
+                function (ec){
+                  var myChart = ec.init(document.getElementById('main1'));
+                  var option = {
+                    series:[{
+                      name: 'news',
+                      type: 'wordCloud',
+                      size: ['80%', '80%'],
+                      textRotation: [0, 45, 90, -45],
+                      textPadding: 0,
+                      autoSize: {
+                        enable: true,
+                        minSize: 14,
+                      },
+                      data : d
+                    }]
+                  };
+                  myChart.setOption(option);
+                }
+              );
+      }
+    </script>
+  </div>
+</div>
+
+
+<div class="panel panel-warning">
+    <div class="panel-heading">情感分析图</div>
+  <div class="panel-body">
+    <div id="main2" style="height:400px"></div>
+    <script src="../static/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script charset="utf-8" type="text/javascript">
+		var myChart = echarts.init(document.getElementById('main2'));
+		option = {
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient : 'vertical',
+        x : 'left',
+        data:['中立','正面','负面']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {
+                show: true, 
+                type: ['pie', 'funnel'],
+                option: {
+                    funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'center',
+                        max: 1548
+                    }
+                }
+            },
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    series : [
+        {
+            //name:'访问来源',
+            type:'pie',
+            radius : ['50%', '70%'],
+            itemStyle : {
+                normal : {
+					 color: function(params) {
+                        // build a color map as your need.
+                        var colorList = [
+                          '#48b','#228b22','#ff4500'
+                        ];
+                        return colorList[params.dataIndex]
+                    },
+                    label : {
+                        show : false
+                    },
+                    labelLine : {
+                        show : false
+                    }
+                },
+                emphasis : {
+                    label : {
+                        show : true,
+                        position : 'center',
+                        textStyle : {
+                            fontSize : '30',
+                            fontWeight : 'bold'
+                        }
+                    }
+                }
+            },
+            data:[
+                {value:{{ emotion[1] }}, name:'中立'},
+                {value:{{ emotion[2] }}, name:'正面'},
+                {value:{{ emotion[3] }}, name:'负面'}
+            ]
+        }
+    ]
+};
+             myChart.setOption(option); 
+    </script>
+  </div>
+	<div id="main3" style="height:400px"></div>
+    <script src="../static/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script charset="utf-8" type="text/javascript">
+		var myChart = echarts.init(document.getElementById('main3'));
+option = {
+    tooltip : {
+        formatter: "{a} <br/>{b} : {c}%"
+    },
+
+    series : [
+        {	
+			min:-50,
+            max:50,
+            name:'评分',
+            type:'gauge',
+            splitNumber: 10,       // 分割段数，默认为5
+            axisLine: {            // 坐标轴线
+                lineStyle: {       // 属性lineStyle控制线条样式
+                    color: [[0.4, '#ff4500'],[0.6, '#48b'],[1, '#228b22']], 
+                    width: 8
+                }
+            },
+            axisTick: {            // 坐标轴小标记
+                splitNumber: 10,   // 每份split细分多少段
+                length :12,        // 属性length控制线长
+                lineStyle: {       // 属性lineStyle控制线条样式
+                    color: 'auto'
+                }
+            },
+            axisLabel: {           // 坐标轴文本标签，详见axis.axisLabel
+                textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: 'auto'
+                }
+            },
+            splitLine: {           // 分隔线
+                show: true,        // 默认显示，属性show控制显示与否
+                length :30,         // 属性length控制线长
+                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                    color: 'auto'
+                }
+            },
+            pointer : {
+                width : 5
+            },
+            title : {
+                show : true,
+                offsetCenter: [0, '-40%'],       // x, y，单位px
+                textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    fontWeight: 'bolder'
+                }
+            },
+            detail : {
+                formatter:'{value}',
+                textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: 'auto',
+                    fontWeight: 'bolder'
+                }
+            },
+            data:[{value: {{ emotion[0] }}, name: '评分'}]
+        }
+    ]
+};
+    //option.series[0].data[0].value = {{ emotion[0] }};
+    myChart.setOption(option,true);
+    </script>
+</div>
+<h3>相关新闻</h3>
+<table class="table table-hover">
+      <tr><th>标题</th><th>热度</th><th>时间</th></tr>
+    {% for l in li %}
+    <tr><td><a href="{{ url_for('news.wordcloud', news_title=l[0]) }}">{{ l[0] }}</a></td><td>{{ l[3] }}</td><td>{{ l[2] }}</td></tr>
+    {% endfor %}
+</table>
+<hr />
+<br />
+<h3>新闻原文</h3>
+<div class="well">
+    {{ content|striptags }}
+</div>
+
+<table class="table table-hover">
+    <tr><th>评论</th><th>赞数</th><th>反对</th></tr>
+    {% for c in comments %}
+    <tr><td>{{ c[0] }}</td><td>{{ c[1] }}</td><td>{{ c[2] }}</td></tr>
+    {% endfor%}
+</table>
+
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="../static/jquery-2.2.3.min.js"></script>
+{% endblock %}
