@@ -24,7 +24,7 @@ class newsRecommend():
             self.tod = dict1['news'][today]
             self.tod.reverse()
             self.tod = self.tod[0:10]
-
+            
         dict2 = self.C2.find_one({'user':self.user})
         if dict2:
             for i in xrange(self.DAYS):
@@ -45,7 +45,7 @@ class newsRecommend():
             if news not in self.tod:
                 if news not in self.rec:
                     self.rec.append(news)
-
+        
         tmp = []
         for i in self.tod:
             tmpdict = self.B4.find_one({'title':i})
@@ -60,8 +60,8 @@ class newsRecommend():
             news = tmp[items[i]]
             if news not in self.tod:
                 if news not in self.rec:
-                    self.rec.append(news)
-
+                    self.rec.append(news) 
+        
 
     def run(self):
         if not self.C1.find_one({'user':self.user}):
@@ -94,7 +94,7 @@ class wbtopicRecommend():
             self.tod = dict1['wbtopic'][today]
             self.tod.reverse()
             self.tod = self.tod[0:10]
-
+            
         dict2 = self.C2.find_one({'user':self.user})
         if dict2:
             for i in xrange(self.DAYS):
@@ -112,26 +112,10 @@ class wbtopicRecommend():
             k1 = 10
         for i in xrange(k1):
             weibo = self.his[items[i]]
-            if weibo not in self.rec:
-                self.rec.append(weibo)
-        '''
-        tmp = []
-        for i in self.tod:
-            tmpdict = self.B4.find_one({'title':i})
-            if tmpdict:
-                tmp.extend(tmpdict['list'])
-        k2 = len(tmp)
-        items = [i for i in xrange(k2)]
-        if k2 > 10:
-            random.shuffle(items)
-            k2 = 10
-        for i in xrange(k2):
-            news = tmp[items[i]]
-            if news not in self.tod:
-                if news not in self.rec:
-                    self.rec.append(news)
-        '''
-
+            if weibo not in self.tod:
+                if weibo not in self.rec:
+                    self.rec.append(weibo)
+        
 
     def run(self):
         if not self.C1.find_one({'user':self.user}):
@@ -164,7 +148,7 @@ class wbhotRecommend():
             self.tod = dict1['wbhot'][today]
             self.tod.reverse()
             self.tod = self.tod[0:10]
-
+            
         dict2 = self.C2.find_one({'user':self.user})
         if dict2:
             for i in xrange(self.DAYS):
@@ -182,8 +166,25 @@ class wbhotRecommend():
             k1 = 10
         for i in xrange(k1):
             weibo = self.his[items[i]]
-            if weibo not in self.rec:
-                self.rec.append(weibo)
+            if weibo not in self.tod:
+                if weibo not in self.rec:
+                    self.rec.append(weibo)
+
+        tmpdict = self.db.A5.find_one({'name':'list'})
+        tim = tmpdict['list'][-1]
+        rdict = self.db.A3.find_one({'time':tim})
+        for x in xrange(10):
+            try:
+                r1 = random.randint(0,50)
+                r2 = random.randint(0,49)
+                tmp = rdict['top'].keys()[r1]
+                tmp = rdict['top'][tmp][r2][0]
+                if tmp not in self.tod:
+                    self.rec.append(tmp)
+            except:
+                pass
+            
+        
 
     def run(self):
         if not self.C1.find_one({'user':self.user}):
@@ -196,7 +197,7 @@ class wbhotRecommend():
         for i in self.rec:
             print i
 
-'''
+'''           
 a = wbhotRecommend('a')
 a.run()
 a.show()

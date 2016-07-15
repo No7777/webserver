@@ -64,6 +64,7 @@ def wordcloud(news_title):
         return redirect(url_for('main.index'))
     dic = b1['words']
     content = b1['content']
+    time_str = b1['time'][:10].replace('-', '')
     od = OrderedDict(sorted(dic.iteritems(), key=lambda d: d[1], reverse=True))
     emotion = [0, 0, 0, 0]
     comments = []
@@ -90,4 +91,4 @@ def wordcloud(news_title):
         li.sort(key=lambda l: l[2], reverse=True)
         if len(li)>15:
             li = li[0:15]
-    return render_template('news/wordcloud.html', dic=json.dumps(od), emotion=emotion, comments=comments, news_title=news_title, content=content, li=li)
+    return render_template('news/wordcloud.html', dic=json.dumps(od), emotion=emotion, comments=comments, news_title=news_title, content=content, li=li, time_str=time_str)
